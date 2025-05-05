@@ -45,10 +45,9 @@ public class Cell : MonoBehaviour
         //Debug.Log("Over: " + this.gameObject.ToString());
         if (CelularAutomat1D.Instance != null)
         {
-            if (!CelularAutomat1D.Instance.Running && Input.GetMouseButtonDown(0))
+            if (!CelularAutomat1D.Instance.GetRunning() && Input.GetMouseButtonDown(0))
             {
                 Flip();
-                //Debug.Log("Flip: " + this.gameObject.ToString());
             }
         }
     }
@@ -62,13 +61,6 @@ public class Cell : MonoBehaviour
             viewPos.z < 0f) // z < 0 means behind the camera
         {
             gameObject.SetActive(false);
-        }
-        else if (CelularAutomat1D.Instance != null)
-        {
-            if (CelularAutomat1D.Instance.Running)
-            {
-                transform.localPosition += new Vector3(0f, 1f * Time.fixedDeltaTime, 0f);
-            }
         }
     }
 }

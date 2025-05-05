@@ -5,28 +5,34 @@ using System.Drawing;
 using UnityEngine.UI;
 using TMPro;
 using Random = UnityEngine.Random;
+using System.Collections;
 
 public class CelularAutomat1D : MonoBehaviour
 {
     public static CelularAutomat1D Instance;
 
+    [Header("PARAMETERS")]
     public GameObject preCell;
 
+    private float StarterPos;
+
     public int NumberOfCells;
-    public float ActiveTime;
     private float size;
     public float Spacing;
 
-    public List<GameObject> AveliableCells = new List<GameObject>();
-    public List<GameObject> CurentCells = new List<GameObject>();
+    [Header("LISTS")]
+    private List<GameObject> AveliableCells = new List<GameObject>();
 
-    public List<bool> ParrentCells = new List<bool>();
-    public List<bool> ChildCells = new List<bool>();
+    private List<GameObject> CurrentCells = new List<GameObject>();
+    private List<bool> ParentCells = new List<bool>();
+
+    private List<bool> ChildCells = new List<bool>();
 
     private bool stateL;
     private bool stateS;
     private bool stateR;
 
+    [Header("BUTTONS")]
     //CERO vivos
     public Button B000;
     private bool S000;
@@ -56,7 +62,12 @@ public class CelularAutomat1D : MonoBehaviour
     private bool S111;
 
     public Button StartStop;
-    public bool Running = false;
+    private bool Running = false;
+
+    [Header("INPUT-FIELD")]
+    public TMP_InputField InpputField;
+    private float wait = 0.1f;
+    private float timer;
 
     private void Awake()
     {
@@ -80,49 +91,68 @@ public class CelularAutomat1D : MonoBehaviour
 
         Set111(Random.value < 0.5f);
 
+        SetRun(false);
+
+        InpputField.text = "Wait: " + wait.ToString("F1");
+
         size = preCell.transform.localScale.x;
 
         GenerateFirstGeneration();
     }
 
-    public void OperateGeneration()
+    public void Update()
     {
-        UpdateCells();
-
-        for (int i = 0; i < ParrentCells.Count; i++)
+        if (Running)
         {
-            GetNeighbors(i);
-            ChildCells[i].Equals(GenerateChild());
+            timer += Time.deltaTime;
+            if (timer >= wait)
+            {
+                OperateGeneration();
+                timer = 0.0f;
+            }
         }
-
-        CurentCells.Clear();
     }
 
-    public void UpdateCells()
+    public void OperateGeneration()
     {
+        StarterPos = this.gameObject.transform.position.y;
+
         MoveActiveCellsUp();
-        CurentCells.Clear();
+
+        UpdateParentCells();
+        UpdateChildCells();
 
         for (int i = 0; i < NumberOfCells; i++)
         {
-            GameObject curCell = AveliableCells[GetInactive()];
-            CurentCells.Add(curCell);
+            GameObject cell = AveliableCells[GetInactive()];
 
-            curCell.transform.position = new Vector3((size * i + Spacing * i), 0, 0);
+            CurrentCells[i] = cell;
 
-            Cell tempCell = curCell.GetComponent<Cell>();
-            tempCell.Life.Equals(ChildCells[i]);
-            curCell.SetActive(true);
+            cell.transform.position =
+                new Vector3(((size * i + Spacing * i) - (size * NumberOfCells + Spacing * NumberOfCells) / 2f),
+                    -3.0f, 0);
+            cell.SetActive(true);
+            cell.GetComponent<Cell>().SetState(ChildCells[i]);
+        }
 
-            curCell.transform.parent.Equals(AveliableCells);
+    }
+
+    public void UpdateParentCells()
+    {
+        ParentCells.Clear();
+        for(int i = 0; i < NumberOfCells; i++)
+        {
+            ParentCells.Add(CurrentCells[i].GetComponent<Cell>().GetState());
         }
     }
 
-    public void GetParentsCurentState()
+    public void UpdateChildCells()
     {
-        for (int i = 0; i < CurentCells.Count; i++)
+        ChildCells.Clear();
+        for (int i = 0; i < NumberOfCells; i++)
         {
-            ParrentCells[i].Equals(CurentCells[i].GetComponent<Cell>().Life);
+            GetNeighbors(i);
+            ChildCells.Add(GenerateChild());
         }
     }
 
@@ -137,17 +167,15 @@ public class CelularAutomat1D : MonoBehaviour
         }
 
         SpawnNewCell();
+
         return GetInactive();
     }
+
     public void SpawnNewCell()
     {
         GameObject curCell = Instantiate(preCell);
         curCell.SetActive(false);
-
         curCell.transform.SetParent(this.gameObject.transform);
-
-        curCell.GetComponent<Cell>().SetState(Random.value < 0.5f);
-        ChildCells.Add(curCell.GetComponent<Cell>().Life);
 
         AveliableCells.Add(curCell);
     }
@@ -173,24 +201,24 @@ public class CelularAutomat1D : MonoBehaviour
         // Left neighbor
         if (val != 0)
         {
-            stateL = ParrentCells[val - 1];
+            stateL = ParentCells[val - 1];
         }
         else
         {
-            stateL = ParrentCells[ParrentCells.Count - 1];
+            stateL = ParentCells[ParentCells.Count - 1];
         }
 
         // Self
-        stateS = ParrentCells[val];
+        stateS = ParentCells[val];
 
         // Right neighbor
-        if (val != ParrentCells.Count - 1)
+        if (val != ParentCells.Count - 1)
         {
-            stateR = ParrentCells[val + 1];
+            stateR = ParentCells[val + 1];
         }
         else
         {
-            stateR = ParrentCells[0];
+            stateR = ParentCells[0];
         }
 
         Debug.Log(val);
@@ -201,7 +229,7 @@ public class CelularAutomat1D : MonoBehaviour
 
     public bool GenerateChild()
     {
-        //CERO vivos
+        //ZERO vivos
         if(!stateL && !stateS && !stateR)
         {
             return S000;
@@ -240,12 +268,37 @@ public class CelularAutomat1D : MonoBehaviour
         {
             return S111;
         }
-        return true;
+
+
+        //DEBUG
+        else
+        {
+            Debug.LogError("ERROR-GeneratingChild");
+            return false;
+        }
+    }
+    public void GenerateFirstGeneration()
+    {
+        for (int i = 0; i < NumberOfCells; i++)
+        {
+            GameObject curCell = Instantiate(preCell);
+            curCell.transform.SetParent(this.gameObject.transform);
+            curCell.transform.position =
+                new Vector3(((size * i + Spacing * i) - (size * NumberOfCells + Spacing * NumberOfCells) / 2f),
+                    -3.0f, 0);
+
+            curCell.GetComponent<Cell>().SetState(Random.value < 0.5f);
+
+            AveliableCells.Add(curCell);
+            CurrentCells.Add(curCell);
+
+            curCell.SetActive(true);
+        }
     }
 
 
-//Tugle
-    //CERO vivos
+//BUTTONS
+    //ZERO vivos
     public void Set000()
     {
         S000 = !S000;
@@ -342,22 +395,37 @@ public class CelularAutomat1D : MonoBehaviour
         B111.GetComponentInChildren<TextMeshProUGUI>().text = S111.ToString();
     }
 
-    public void GenerateFirstGeneration()
+    //EXTRAS
+    public void SwitchRun()
     {
-        for (int i = 0; i < NumberOfCells; i++)
-        {
-            GameObject curCell = Instantiate(preCell);
-            curCell.transform.SetParent(this.gameObject.transform);
-            curCell.transform.position = new Vector3((size * i + Spacing * i), 0, 0);
-
-            curCell.GetComponent<Cell>().SetState(Random.value < 0.5f);
-
-            AveliableCells.Add(curCell);
-
-            Debug.Log(curCell.gameObject.activeInHierarchy);
-            curCell.SetActive(true);
-            Debug.Log(curCell.gameObject.activeInHierarchy);
-        }
+        Running = !Running;
+        StartStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + Running.ToString();
     }
 
+    public void SetRun(bool state)
+    {
+        Running = state;
+        StartStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + Running.ToString();
+    }
+
+    public bool GetRunning()
+    {
+        return Running;
+    }
+
+    public void SetWait()
+    {
+        wait = float.Parse(InpputField.text);
+        InpputField.text = "Wait: " + wait.ToString("F1");
+    }
+
+    public void SelectIF()
+    {
+        InpputField.text = wait.ToString("F1");
+    }
+
+    public void DeselectIF()
+    {
+        InpputField.text = "Wait: " + wait.ToString("F1");
+    }
 }
