@@ -234,7 +234,7 @@ public class CelularAutomat2D : MonoBehaviour
         _audioSource.bypassListenerEffects = true;
         _audioSource.bypassEffects = true;
         _audioSource.bypassReverbZones = true;
-        _audioSource.clip = _SFX[Random.Range(0, _SFX.Count -1)];
+        _audioSource.clip = _SFX[Random.Range(0, _SFX.Count)];
     }
     private void PlaySFX()
     {
