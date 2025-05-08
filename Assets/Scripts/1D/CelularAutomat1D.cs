@@ -6,68 +6,75 @@ using UnityEngine.UI;
 using TMPro;
 using Random = UnityEngine.Random;
 using System.Collections;
+using System.Xml.Serialization;
 
 public class CelularAutomat1D : MonoBehaviour
 {
     public static CelularAutomat1D Instance;
 
     [Header("PARAMETERS")]
-    public GameObject preCell;
+    public GameObject _preCell;
 
-    private float StarterPos;
-
-    public int NumberOfCells;
-    private float size;
-    public float Spacing;
+    public int _numberOfCells;
+    private float _size;
+    public float _spacing;
 
     [Header("LISTS")]
-    private List<GameObject> AveliableCells = new List<GameObject>();
+    private List<GameObject> _availableCells = new List<GameObject>();
 
-    private List<GameObject> CurrentCells = new List<GameObject>();
-    private List<bool> ParentCells = new List<bool>();
+    private List<GameObject> _currentCells = new List<GameObject>();
+    private List<bool> _parentCells = new List<bool>();
 
-    private List<bool> ChildCells = new List<bool>();
+    private List<bool> _childCells = new List<bool>();
 
-    private bool stateL;
-    private bool stateS;
-    private bool stateR;
+    private bool _stateL;
+    private bool _stateS;
+    private bool _stateR;
 
     [Header("BUTTONS")]
     //CERO vivos
-    public Button B000;
-    private bool S000;
+    public Button _B000;
+    private bool _S000;
 
     //UN vivo
-    public Button B001;
-    private bool S001;
+    public Button _B001;
+    private bool _S001;
 
-    public Button B010;
-    private bool S010;
+    public Button _B010;
+    private bool _S010;
 
-    public Button B100;
-    private bool S100;
+    public Button _B100;
+    private bool _S100;
 
     //DOS vivos
-    public Button B011;
-    private bool S011;
+    public Button _B011;
+    private bool _S011;
 
-    public Button B101;
-    private bool S101;
+    public Button _B101;
+    private bool _S101;
 
-    public Button B110;
-    private bool S110;
+    public Button _B110;
+    private bool _S110;
 
     //TRES vivos
-    public Button B111;
-    private bool S111;
+    public Button _B111;
+    private bool _S111;
 
-    public Button StartStop;
-    private bool Running = false;
+    public Button _startStop;
+    private bool _running = false;
 
     [Header("INPUT-FIELD")]
-    public TMP_InputField InpputField;
-    private float wait = 0.1f;
-    private float timer;
+    public TMP_InputField _inputField;
+    private float _wait = 0.1f;
+    private float _timer;
+
+    [Header("GENERATION-FIELD")] 
+    public TextMeshProUGUI _genTMP;
+    public int _generationN = 0;
+
+    [Header("SFX")]
+    private AudioSource _audioSource;
+    public List<AudioClip> _SFX;
 
     private void Awake()
     {
@@ -93,74 +100,75 @@ public class CelularAutomat1D : MonoBehaviour
 
         SetRun(false);
 
-        InpputField.text = "Wait: " + wait.ToString("F1");
+        _inputField.text = "Wait: " + _wait.ToString("F1");
 
-        size = preCell.transform.localScale.x;
+        _size = _preCell.transform.localScale.x;
 
         GenerateFirstGeneration();
+        SetGenerationText();
     }
 
     public void Update()
     {
-        if (Running)
+        if (_running)
         {
-            timer += Time.deltaTime;
-            if (timer >= wait)
+            _timer += Time.deltaTime;
+            if (_timer >= _wait)
             {
                 OperateGeneration();
-                timer = 0.0f;
+                _timer = 0.0f;
             }
         }
     }
 
     public void OperateGeneration()
     {
-        StarterPos = this.gameObject.transform.position.y;
-
         MoveActiveCellsUp();
 
         UpdateParentCells();
         UpdateChildCells();
 
-        for (int i = 0; i < NumberOfCells; i++)
+        for (int i = 0; i < _numberOfCells; i++)
         {
-            GameObject cell = AveliableCells[GetInactive()];
+            GameObject cell = _availableCells[GetInactive()];
 
-            CurrentCells[i] = cell;
+            _currentCells[i] = cell;
 
             cell.transform.position =
-                new Vector3(((size * i + Spacing * i) - (size * NumberOfCells + Spacing * NumberOfCells) / 2f),
+                new Vector3(((_size * i + _spacing * i) - (_size * _numberOfCells + _spacing * _numberOfCells) / 2f),
                     -3.0f, 0);
             cell.SetActive(true);
-            cell.GetComponent<Cell>().SetState(ChildCells[i]);
+            cell.GetComponent<Cell>().SetState(_childCells[i]);
         }
+
+        AddGeneration();
 
     }
 
     public void UpdateParentCells()
     {
-        ParentCells.Clear();
-        for(int i = 0; i < NumberOfCells; i++)
+        _parentCells.Clear();
+        for(int i = 0; i < _numberOfCells; i++)
         {
-            ParentCells.Add(CurrentCells[i].GetComponent<Cell>().GetState());
+            _parentCells.Add(_currentCells[i].GetComponent<Cell>().GetState());
         }
     }
 
     public void UpdateChildCells()
     {
-        ChildCells.Clear();
-        for (int i = 0; i < NumberOfCells; i++)
+        _childCells.Clear();
+        for (int i = 0; i < _numberOfCells; i++)
         {
             GetNeighbors(i);
-            ChildCells.Add(GenerateChild());
+            _childCells.Add(GenerateChild());
         }
     }
 
     public int GetInactive()
     {
-        for (int i = 0; i < AveliableCells.Count; i++)
+        for (int i = 0; i < _availableCells.Count; i++)
         {
-            if (!AveliableCells[i].activeInHierarchy)
+            if (!_availableCells[i].activeInHierarchy)
             {
                 return i;
             }
@@ -173,20 +181,20 @@ public class CelularAutomat1D : MonoBehaviour
 
     public void SpawnNewCell()
     {
-        GameObject curCell = Instantiate(preCell);
+        GameObject curCell = Instantiate(_preCell);
         curCell.SetActive(false);
         curCell.transform.SetParent(this.gameObject.transform);
 
-        AveliableCells.Add(curCell);
+        _availableCells.Add(curCell);
     }
 
     public void MoveActiveCellsUp()
     {
-        for (int i = 0; i < AveliableCells.Count; i++)
+        for (int i = 0; i < _availableCells.Count; i++)
         {
-            if (AveliableCells[i].activeInHierarchy)
+            if (_availableCells[i].activeInHierarchy)
             {
-                AveliableCells[i].transform.localPosition += new Vector3(0f, size + Spacing, 0f);
+                _availableCells[i].transform.localPosition += new Vector3(0f, _size + _spacing, 0f);
             }
         }
     }
@@ -201,72 +209,72 @@ public class CelularAutomat1D : MonoBehaviour
         // Left neighbor
         if (val != 0)
         {
-            stateL = ParentCells[val - 1];
+            _stateL = _parentCells[val - 1];
         }
         else
         {
-            stateL = ParentCells[ParentCells.Count - 1];
+            _stateL = _parentCells[_parentCells.Count - 1];
         }
 
         // Self
-        stateS = ParentCells[val];
+        _stateS = _parentCells[val];
 
         // Right neighbor
-        if (val != ParentCells.Count - 1)
+        if (val != _parentCells.Count - 1)
         {
-            stateR = ParentCells[val + 1];
+            _stateR = _parentCells[val + 1];
         }
         else
         {
-            stateR = ParentCells[0];
+            _stateR = _parentCells[0];
         }
 
-        Debug.Log(val);
-        Debug.Log("  L-" + val + ": " + stateL);
-        Debug.Log("  S-" + val + ": " + stateS);
-        Debug.Log("  R-" + val + ": " + stateR);
+        /*Debug.Log(val);
+        Debug.Log("  L-" + val + ": " + _stateL);
+        Debug.Log("  S-" + val + ": " + _stateS);
+        Debug.Log("  R-" + val + ": " + _stateR);*/
     }
 
     public bool GenerateChild()
     {
         //ZERO vivos
-        if(!stateL && !stateS && !stateR)
+        if(!_stateL && !_stateS && !_stateR)
         {
-            return S000;
+            return _S000;
         }
 
         //UN VIVO
-        else if(!stateL && !stateS && stateR)
+        else if(!_stateL && !_stateS && _stateR)
         {
-            return S001;
+            return _S001;
         }
-        else if (!stateL && stateS && !stateR)
+        else if (!_stateL && _stateS && !_stateR)
         {
-            return S010;
+            return _S010;
         }
-        else if (stateL && !stateS && !stateR)
+        else if (_stateL && !_stateS && !_stateR)
         {
-            return S100;
+            return _S100;
         }
 
         //DOS vivos
-        else if (!stateL && stateS && stateR)
+        else if (!_stateL && _stateS && _stateR)
         {
-            return S011;
+            return _S011;
         }
-        else if (stateL && !stateS && stateR)
+        else if (_stateL && !_stateS && _stateR)
         {
-            return S101;
+            return _S101;
         }
-        else if (stateL && stateS && !stateR)
+        else if (_stateL && _stateS && !_stateR)
         {
-            return S110;
+            return _S110;
         }
 
         //TRES vivos
-        else if (stateL && stateS && stateR)
+        else if (_stateL && _stateS && _stateR)
         {
-            return S111;
+            return _S111;
         }
 
 
@@ -279,18 +287,18 @@ public class CelularAutomat1D : MonoBehaviour
     }
     public void GenerateFirstGeneration()
     {
-        for (int i = 0; i < NumberOfCells; i++)
+        for (int i = 0; i < _numberOfCells; i++)
         {
-            GameObject curCell = Instantiate(preCell);
+            GameObject curCell = Instantiate(_preCell);
             curCell.transform.SetParent(this.gameObject.transform);
             curCell.transform.position =
-                new Vector3(((size * i + Spacing * i) - (size * NumberOfCells + Spacing * NumberOfCells) / 2f),
+                new Vector3(((_size * i + _spacing * i) - (_size * _numberOfCells + _spacing * _numberOfCells) / 2f),
                     -3.0f, 0);
 
             curCell.GetComponent<Cell>().SetState(Random.value < 0.5f);
 
-            AveliableCells.Add(curCell);
-            CurrentCells.Add(curCell);
+            _availableCells.Add(curCell);
+            _currentCells.Add(curCell);
 
             curCell.SetActive(true);
         }
@@ -301,131 +309,176 @@ public class CelularAutomat1D : MonoBehaviour
     //ZERO vivos
     public void Set000()
     {
-        S000 = !S000;
-        B000.GetComponentInChildren<TextMeshProUGUI>().text = S000.ToString();
+        _S000 = !_S000;
+        _B000.GetComponentInChildren<TextMeshProUGUI>().text = _S000.ToString();
     }
 
     //UN vivo
     public void Set001()
     {
-        S001 = !S001;
-        B001.GetComponentInChildren<TextMeshProUGUI>().text = S001.ToString();
+        _S001 = !_S001;
+        _B001.GetComponentInChildren<TextMeshProUGUI>().text = _S001.ToString();
     }
     public void Set010()
     {
-        S010 = !S010;
-        B010.GetComponentInChildren<TextMeshProUGUI>().text = S010.ToString();
+        _S010 = !_S010;
+        _B010.GetComponentInChildren<TextMeshProUGUI>().text = _S010.ToString();
     }
     public void Set100()
     {
-        S100 = !S100;
-        B100.GetComponentInChildren<TextMeshProUGUI>().text = S100.ToString();
+        _S100 = !_S100;
+        _B100.GetComponentInChildren<TextMeshProUGUI>().text = _S100.ToString();
     }
 
     //DOS vivos
     public void Set011()
     {
-        S011 = !S011;
-        B011.GetComponentInChildren<TextMeshProUGUI>().text = S011.ToString();
+        _S011 = !_S011;
+        _B011.GetComponentInChildren<TextMeshProUGUI>().text = _S011.ToString();
     }
     public void Set101()
     {
-        S101 = !S101;
-        B101.GetComponentInChildren<TextMeshProUGUI>().text = S101.ToString();
+        _S101 = !_S101;
+        _B101.GetComponentInChildren<TextMeshProUGUI>().text = _S101.ToString();
     }
     public void Set110()
     {
-        S110 = !S110;
-        B110.GetComponentInChildren<TextMeshProUGUI>().text = S110.ToString();
+        _S110 = !_S110;
+        _B110.GetComponentInChildren<TextMeshProUGUI>().text = _S110.ToString();
     }
 
     //TRES vivos
     public void Set111()
     {
-        S111 = !S111;
-        B111.GetComponentInChildren<TextMeshProUGUI>().text = S111.ToString();
+        _S111 = !_S111;
+        _B111.GetComponentInChildren<TextMeshProUGUI>().text = _S111.ToString();
     }
 
 //Manual
     //CERO vivos
     public void Set000(bool val)
     {
-        S000 = val;
-        B000.GetComponentInChildren<TextMeshProUGUI>().text = S000.ToString();
+        _S000 = val;
+        _B000.GetComponentInChildren<TextMeshProUGUI>().text = _S000.ToString();
     }
 
     //UN vivo
     public void Set001(bool val)
     {
-        S001 = val;
-        B001.GetComponentInChildren<TextMeshProUGUI>().text = S001.ToString();
+        _S001 = val;
+        _B001.GetComponentInChildren<TextMeshProUGUI>().text = _S001.ToString();
     }
     public void Set010(bool val)
     {
-        S010 = val;
-        B010.GetComponentInChildren<TextMeshProUGUI>().text = S010.ToString();
+        _S010 = val;
+        _B010.GetComponentInChildren<TextMeshProUGUI>().text = _S010.ToString();
     }
     public void Set100(bool val)
     {
-        S100 = val;
-        B100.GetComponentInChildren<TextMeshProUGUI>().text = S100.ToString();
+        _S100 = val;
+        _B100.GetComponentInChildren<TextMeshProUGUI>().text = _S100.ToString();
     }
 
     //DOS vivos
     public void Set011(bool val)
     {
-        S011 = val;
-        B011.GetComponentInChildren<TextMeshProUGUI>().text = S011.ToString();
+        _S011 = val;
+        _B011.GetComponentInChildren<TextMeshProUGUI>().text = _S011.ToString();
     }
     public void Set101(bool val)
     {
-        S101 = val;
-        B101.GetComponentInChildren<TextMeshProUGUI>().text = S101.ToString();
+        _S101 = val;
+        _B101.GetComponentInChildren<TextMeshProUGUI>().text = _S101.ToString();
     }
     public void Set110(bool val)
     {
-        S110 = val;
-        B110.GetComponentInChildren<TextMeshProUGUI>().text = S110.ToString();
+        _S110 = val;
+        _B110.GetComponentInChildren<TextMeshProUGUI>().text = _S110.ToString();
     }
 
     //TRES vivos
     public void Set111(bool val)
     {
-        S111 = val;
-        B111.GetComponentInChildren<TextMeshProUGUI>().text = S111.ToString();
+        _S111 = val;
+        _B111.GetComponentInChildren<TextMeshProUGUI>().text = _S111.ToString();
     }
 
     //EXTRAS
     public void SwitchRun()
     {
-        Running = !Running;
-        StartStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + Running.ToString();
+        _running = !_running;
+        if (_running)
+        {
+            SetAudioSource();
+        }
+
+        _startStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + _running.ToString();
     }
 
     public void SetRun(bool state)
     {
-        Running = state;
-        StartStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + Running.ToString();
+        _running = state;
+        _startStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + _running.ToString();
     }
 
     public bool GetRunning()
     {
-        return Running;
+        return _running;
     }
 
     public void SetWait()
     {
-        wait = float.Parse(InpputField.text);
-        InpputField.text = "Wait: " + wait.ToString("F1");
+        if (!_inputField) return;
+
+        _wait = float.Parse(_inputField.text);
+        _inputField.text = "Wait: " + _wait.ToString("F1");
     }
 
     public void SelectIF()
     {
-        InpputField.text = wait.ToString("F1");
+        if (!_inputField) return;
+
+        _inputField.text = _wait.ToString("F1");
     }
 
     public void DeselectIF()
     {
-        InpputField.text = "Wait: " + wait.ToString("F1");
+        if (!_inputField) return;
+
+        _inputField.text = "Wait: " + _wait.ToString("F1");
+    }
+
+    public void AddGeneration()
+    {
+        if(!_genTMP) return;
+
+        _generationN++;
+        _genTMP.text = "Number of Generations: " + _generationN.ToString();
+        PlaySFX();
+    }
+    public void SetGenerationText()
+    {
+        if(!_genTMP) return;
+
+        _genTMP.text = "Number of Generations: " + _generationN.ToString();
+    }
+
+    private void SetAudioSource()
+    {
+        if (_SFX.Count == 0) return;
+
+        _audioSource = this.gameObject.GetComponent<AudioSource>();
+        _audioSource.volume = 1.0f;
+        _audioSource.bypassListenerEffects = true;
+        _audioSource.bypassEffects = true;
+        _audioSource.bypassReverbZones = true;
+        _audioSource.clip = _SFX[Random.Range(0, _SFX.Count - 1)];
+    }
+    private void PlaySFX()
+    {
+        if (_SFX.Count == 0) return;
+
+        _audioSource.pitch = Random.Range(0.9f, 1.1f);
+        _audioSource.Play();
     }
 }

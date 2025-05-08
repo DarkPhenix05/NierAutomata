@@ -2,42 +2,44 @@ using UnityEngine;
 
 public class Cell : MonoBehaviour
 {
-    public bool Life = false;
-    private SpriteRenderer SRenderer;
-    private Camera cam;
+    public bool _life = false;
+    private SpriteRenderer _SRenderer;
+    private Camera _cam;
+
+    public int CellAutomatCounter = 0;
 
     void Start()
     {
-        SRenderer = GetComponent<SpriteRenderer>();
-        cam = Camera.main;
+        _SRenderer = GetComponent<SpriteRenderer>();
+        _cam = Camera.main;
     }
 
     public void SetState(bool state)
     {
-        Life = state;
+        _life = state;
 
-        if (!SRenderer)
+        if (!_SRenderer)
         {
-            SRenderer = GetComponent<SpriteRenderer>();
+            _SRenderer = GetComponent<SpriteRenderer>();
         }
-        SRenderer.color = Life ? Color.white : Color.black;
+        _SRenderer.color = _life ? Color.white : Color.black;
     }
 
     private void Flip()
     {
-        Life = !Life;
+        _life = !_life;
 
-        if (!SRenderer)
+        if (!_SRenderer)
         {
-            SRenderer = GetComponent<SpriteRenderer>();
+            _SRenderer = GetComponent<SpriteRenderer>();
         }
 
-        SRenderer.color = Life ? Color.white : Color.black;
+        _SRenderer.color = _life ? Color.white : Color.black;
     }
 
     public bool GetState()
     {
-        return (Life);
+        return (_life);
     }
 
     private void OnMouseOver()
@@ -45,8 +47,20 @@ public class Cell : MonoBehaviour
         //Debug.Log("Over: " + this.gameObject.ToString());
         if (CelularAutomat1D.Instance != null)
         {
+            //Debug.Log("D1");
             if (!CelularAutomat1D.Instance.GetRunning() && Input.GetMouseButtonDown(0))
             {
+                //Debug.Log("Click D1");
+                Flip();
+            }
+        }
+
+        else if (CelularAutomat2D.Instance != null)
+        {
+            //Debug.Log("D1");
+            if (!CelularAutomat2D.Instance.GetRunning() && Input.GetMouseButtonDown(0))
+            {
+                //Debug.Log("Click D2");
                 Flip();
             }
         }
@@ -54,13 +68,15 @@ public class Cell : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 viewPos = cam.WorldToScreenPoint(transform.position);
-
-        if (viewPos.y < 0f || viewPos.y > Screen.height ||
-            viewPos.x < 0f || viewPos.x > Screen.width ||
-            viewPos.z < 0f) // z < 0 means behind the camera
+        if (CelularAutomat1D.Instance != null)
         {
-            gameObject.SetActive(false);
+            Vector3 viewPos = _cam.WorldToScreenPoint(transform.position);
+
+            if (viewPos.y < 0f || viewPos.y > Screen.height ||
+                viewPos.z < 0f) // z < 0 means behind the camera
+            {
+                gameObject.SetActive(false);
+            }
         }
     }
 }
