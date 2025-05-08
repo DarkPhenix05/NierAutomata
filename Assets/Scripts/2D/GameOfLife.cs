@@ -2,26 +2,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
-public class CelularAutomat2D : MonoBehaviour
+public class GameOfLife : MonoBehaviour
 {
-    public static CelularAutomat2D Instance;
+    public static GameOfLife Instance;
 
-    public Vector2 _matixSize;
+    private Vector2 _matixSize;
+
     public GameObject _cellPre;
     private Transform _cellHolder;
     private float _size;
     public float _spacing;
 
     public List<List<Cell>> _cells = new List<List<Cell>>();
+    public List<GameObject> _availableCells = new List<GameObject>();
 
     public List<List<bool>> _parentMatrix = new List<List<bool>>();
     public List<List<bool>> _childMatrix = new List<List<bool>>();
 
-    [Header("INPUT-FIELD")]
-    public TMP_InputField _inputField;
+    [Header("INPUT-FIELDS")]
+    public TMP_InputField _inputWait;
     private float _wait = 0.1f;
     private float _timer;
+
+    public TMP_InputField _inputSizeX;
+    public TMP_InputField _inputSizeY;
+    private Vector2 _tempSize = new Vector2(10,10);
+
 
     [Header("GENERATION-FIELD")]
     public TextMeshProUGUI _genTMP;
@@ -48,14 +56,14 @@ public class CelularAutomat2D : MonoBehaviour
         _cellHolder = this.gameObject.transform;
         _size = _cellPre.transform.localScale.x;
 
-        SetUpMatrixs(_matixSize);
+        SetUpMatrixs();
         SetGenerationText();
-
-        _inputField.text = "Wait: " + _wait.ToString("F1");
+        SetWaitText();
+        SetSiceText();
     }
     public void Update()
     {
-        if (_running)
+        if (_running && _parentMatrix.Count > 0)
         {
             _timer += Time.deltaTime;
             if (_timer >= _wait)
@@ -131,18 +139,36 @@ public class CelularAutomat2D : MonoBehaviour
         return count;
     }
 
-    public void SetUpMatrixs(Vector2 size)
+    public void SetUpMatrixs()
     {
-        for (int i = 0; i < size.x; i++)
+        SetGenerationText();
+
+        for (int i = 0; i < _availableCells.Count; i++)
+        {
+            _availableCells[i].SetActive(false);
+        }
+
+        _cells.Clear();
+
+        _parentMatrix.Clear();
+        _childMatrix.Clear();
+
+        _matixSize = _tempSize;
+
+        for (int i = 0; i < _matixSize.x; i++)
         {
             var row = new List<bool>();
             var rowC = new List<Cell>();
 
-            for (int j = 0; j < size.y; j++)
+            for (int j = 0; j < _matixSize.y; j++)
             {
-                bool state = (Random.value > 0.5f);
+                bool state;
+                
+                state = (Random.value > 0.5f);
                 row.Add(state);
-                rowC.Add(SpawnCell(i, j, state));
+                rowC.Add(SetCell(i, j, state));
+                
+                
             }
 
             _parentMatrix.Add(row);
@@ -152,9 +178,29 @@ public class CelularAutomat2D : MonoBehaviour
         _childMatrix = _parentMatrix;
     }
 
-    private Cell SpawnCell(int x, int y, bool state)
+    public void UpdateLists(bool rand)
     {
-        GameObject newGO = Instantiate(_cellPre);
+        _parentMatrix.Clear();
+        _childMatrix.Clear();
+
+        for (int i = 0; i < _matixSize.x; i++)
+        {
+            var row = new List<bool>();
+
+            for (int j = 0; j < _matixSize.y; j++)
+            {
+                row.Add(_cells[i][j].GetState());
+            }
+
+            _parentMatrix.Add(row);
+        }
+
+        _childMatrix = _parentMatrix;
+    }
+
+    private Cell SetCell(int x, int y, bool state)
+    {
+        GameObject newGO = _availableCells[GetInactive()];
         newGO.transform.parent = _cellHolder;
         newGO.transform.position = 
             new Vector3(((_size * x + _spacing * x) - (_size * _matixSize.x + _spacing * _matixSize.x) / 2f),
@@ -168,26 +214,90 @@ public class CelularAutomat2D : MonoBehaviour
         return newCell;
     }
 
+    public int GetInactive()
+    {
+        for (int i = 0; i < _availableCells.Count; i++)
+        {
+            if (!_availableCells[i].activeInHierarchy)
+            {
+                return i;
+            }
+        }
+
+        SpawnNewCell();
+
+        return GetInactive();
+    }
+
+    public void SpawnNewCell()
+    {
+        GameObject curCell = Instantiate(_cellPre);
+        curCell.SetActive(false);
+        curCell.transform.SetParent(this.gameObject.transform);
+
+        _availableCells.Add(curCell);
+    }
+
     public void SetWait()
     {
-        if (!_inputField) return;
+        if (!_inputWait) return;
 
-        _wait = float.Parse(_inputField.text);
-        _inputField.text = "Wait: " + _wait.ToString("F1");
+        _wait = float.Parse(_inputWait.text);
+        _inputWait.text = "Wait: " + _wait.ToString("F1");
     }
 
-    public void SelectIF()
+    public void SelectWait()
     {
-        if (!_inputField) return;
+        if (!_inputWait) return;
 
-        _inputField.text = _wait.ToString("F1");
+        _inputWait.text = _wait.ToString("F1");
     }
 
-    public void DeselectIF()
+    public void DeselectWait()
     {
-        if (!_inputField) return;
+        if (!_inputWait) return;
 
-        _inputField.text = "Wait: " + _wait.ToString("F1");
+        _inputWait.text = "Wait: " + _wait.ToString("F1");
+    }
+
+    public void SetX()
+    {
+        if (!_inputSizeX) return;
+
+        _tempSize.x = float.Parse(_inputSizeX.text);
+        _inputSizeX.text = "X: " + _tempSize.x.ToString("n0");
+    }
+    public void SelectX()
+    {
+        if (!_inputSizeX) return;
+
+        _inputSizeX.text = _tempSize.x.ToString("n0");
+    }
+    public void DeselecX()
+    {
+        if (!_inputSizeX) return;
+
+        _inputSizeX.text = "X: " + _tempSize.x.ToString("n0");
+    }
+
+    public void SetY()
+    {
+        if (!_inputSizeY) return;
+
+        _tempSize.y = float.Parse(_inputSizeY.text);
+        _inputSizeY.text = "Y: " + _tempSize.y.ToString("n0");
+    }
+    public void SelectY()
+    {
+        if (!_inputSizeY) return;
+
+        _inputSizeY.text = _tempSize.y.ToString("n0");
+    }
+    public void DeselecY()
+    {
+        if (!_inputSizeY) return;
+
+        _inputSizeY.text = "Y: " + _tempSize.y.ToString("n0");
     }
 
     public bool GetRunning()
@@ -197,11 +307,13 @@ public class CelularAutomat2D : MonoBehaviour
 
     public void SwitchRun()
     {
-        _running = !_running;
-        if (_running)
+        if (!_running)
         {
+            UpdateLists(false);
             SetAudioSource();
         }
+
+        _running = !_running;
         
         _startStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + _running.ToString();
     }
@@ -209,6 +321,19 @@ public class CelularAutomat2D : MonoBehaviour
     {
         _running = state;
         _startStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + _running.ToString();
+    }
+
+    public void SetWaitText()
+    {
+        _inputWait.text = "Wait: " + _wait.ToString("F2");
+    }
+
+    public void SetSiceText()
+    {
+        if (!_inputSizeX || !_inputSizeY) return;
+        
+        _inputSizeX.text = "X: " + _tempSize.x.ToString("n0");
+        _inputSizeY.text = "Y: " + _tempSize.y.ToString("n0");
     }
 
     public void AddGeneration()
@@ -219,12 +344,22 @@ public class CelularAutomat2D : MonoBehaviour
         _genTMP.text = "Number of Generations: " + _generationN.ToString();
         PlaySFX();
     }
-    public void SetGenerationText()
+    public void SetGenerationText(int val = 0)
     {
         if (!_genTMP) return;
 
+        _generationN = val;
         _genTMP.text = "Number of Generations: " + _generationN.ToString();
     }
+
+    public void ResetGenerationCount()
+    {
+        if (!_genTMP) return;
+
+        _generationN = 0;
+        _genTMP.text = "Number of Generations: " + _generationN.ToString();
+    }
+
     private void SetAudioSource()
     {
         if (_SFX.Count == 0) return;
@@ -243,5 +378,4 @@ public class CelularAutomat2D : MonoBehaviour
         _audioSource.pitch = Random.Range(0.9f, 1.1f);
         _audioSource.Play();
     }
-
 }

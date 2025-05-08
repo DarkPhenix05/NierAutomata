@@ -16,6 +16,7 @@ public class CelularAutomat1D : MonoBehaviour
     public GameObject _preCell;
 
     public int _numberOfCells;
+    //private int _tempNumcells = 25;
     private float _size;
     public float _spacing;
 
@@ -136,7 +137,7 @@ public class CelularAutomat1D : MonoBehaviour
 
             cell.transform.position =
                 new Vector3(((_size * i + _spacing * i) - (_size * _numberOfCells + _spacing * _numberOfCells) / 2f),
-                    -3.0f, 0);
+                    0f, 0);
             cell.SetActive(true);
             cell.GetComponent<Cell>().SetState(_childCells[i]);
         }
@@ -287,13 +288,15 @@ public class CelularAutomat1D : MonoBehaviour
     }
     public void GenerateFirstGeneration()
     {
+        SetGenerationText();
+
         for (int i = 0; i < _numberOfCells; i++)
         {
             GameObject curCell = Instantiate(_preCell);
             curCell.transform.SetParent(this.gameObject.transform);
             curCell.transform.position =
                 new Vector3(((_size * i + _spacing * i) - (_size * _numberOfCells + _spacing * _numberOfCells) / 2f),
-                    -3.0f, 0);
+                    0f, 0);
 
             curCell.GetComponent<Cell>().SetState(Random.value < 0.5f);
 
@@ -456,10 +459,11 @@ public class CelularAutomat1D : MonoBehaviour
         _genTMP.text = "Number of Generations: " + _generationN.ToString();
         PlaySFX();
     }
-    public void SetGenerationText()
+    public void SetGenerationText(int val = 0)
     {
         if(!_genTMP) return;
 
+        _generationN = val;
         _genTMP.text = "Number of Generations: " + _generationN.ToString();
     }
 

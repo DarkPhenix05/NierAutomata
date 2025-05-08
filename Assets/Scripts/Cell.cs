@@ -3,6 +3,7 @@ using UnityEngine;
 public class Cell : MonoBehaviour
 {
     public bool _life = false;
+    public int _lifeTime = 0; //Add Logic For Number of Lines
     private SpriteRenderer _SRenderer;
     private Camera _cam;
 
@@ -52,16 +53,18 @@ public class Cell : MonoBehaviour
             {
                 //Debug.Log("Click D1");
                 Flip();
+                CelularAutomat1D.Instance.SetGenerationText();
             }
         }
 
-        else if (CelularAutomat2D.Instance != null)
+        else if (GameOfLife.Instance != null)
         {
             //Debug.Log("D1");
-            if (!CelularAutomat2D.Instance.GetRunning() && Input.GetMouseButtonDown(0))
+            if (!GameOfLife.Instance.GetRunning() && Input.GetMouseButtonDown(0))
             {
                 //Debug.Log("Click D2");
                 Flip();
+                GameOfLife.Instance.SetGenerationText();
             }
         }
     }
@@ -78,5 +81,10 @@ public class Cell : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
+    }
+
+    public void SelfDestruct()
+    {
+        Destroy(this.gameObject);
     }
 }
