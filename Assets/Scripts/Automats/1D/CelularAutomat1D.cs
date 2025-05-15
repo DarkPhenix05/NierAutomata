@@ -1,12 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
-using System.Drawing;
 using UnityEngine.UI;
 using TMPro;
 using Random = UnityEngine.Random;
-using System.Collections;
-using System.Xml.Serialization;
 
 public class CelularAutomat1D : MonoBehaviour
 {
@@ -16,7 +12,6 @@ public class CelularAutomat1D : MonoBehaviour
     public GameObject _preCell;
 
     public int _numberOfCells;
-    //private int _tempNumcells = 25;
     private float _size;
     public float _spacing;
 
