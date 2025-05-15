@@ -19,1081 +19,34 @@ public class CelularAutomat2D : MonoBehaviour
     public List<List<Cell>> _cells = new List<List<Cell>>();
     public List<GameObject> _availableCells = new List<GameObject>();
 
-    public List<List<bool>> _parentMatrix = new List<List<bool>>();
-    public List<List<bool>> _childMatrix = new List<List<bool>>();
-
-    private bool _stateLeft;
-    private bool _stateRight;
-
-    private bool _stateSelf;
-
-    private bool _stateUp;
-    private bool _stateDown;
-
-    private bool _stateRightUp;
-    private bool _stateRightDown;
-
-    private bool _stateLeftUp;
-    private bool _stateLeftDown;
-
+    public List<List<int>> _parentMatrix = new List<List<int>>();
+    public List<List<int>> _childMatrix = new List<List<int>>();
 
     private bool corners;
+    private bool wrap;
 
     [Header("BUTTONS")]
-    #region BOOLS/BUTTONS
-    //0 vivos
-    public ButtonScript _B000000000;
-    private bool _S000000000;
-
-    //1 vivo
-    public ButtonScript _B100000000;
-    private bool _S100000000;
-    public ButtonScript _B010000000;
-    private bool _S010000000;
-    public ButtonScript _B001000000;
-    private bool _S001000000;
-    public ButtonScript _B000100000;
-    private bool _S000100000;
-    public ButtonScript _B000010000;
-    private bool _S000010000;
-    public ButtonScript _B000001000;
-    private bool _S000001000;
-    public ButtonScript _B000000100;
-    private bool _S000000100;
-    public ButtonScript _B000000010;
-    private bool _S000000010;
-    public ButtonScript _B000000001;
-    private bool _S000000001;
-
-    //2 vivos
-    public ButtonScript _B110000000;
-    private bool _S110000000;
-    public ButtonScript _B101000000;
-    private bool _S101000000;
-    public ButtonScript _B100100000;
-    private bool _S100100000;
-    public ButtonScript _B100010000;
-    private bool _S100010000;
-    public ButtonScript _B100001000;
-    private bool _S100001000;
-    public ButtonScript _B100000100;
-    private bool _S100000100;
-    public ButtonScript _B100000010;
-    private bool _S100000010;
-    public ButtonScript _B100000001;
-    private bool _S100000001;
-    public ButtonScript _B011000000;
-    private bool _S011000000;
-    public ButtonScript _B010100000;
-    private bool _S010100000;
-    public ButtonScript _B010010000;
-    private bool _S010010000;
-    public ButtonScript _B010001000;
-    private bool _S010001000;
-    public ButtonScript _B010000100;
-    private bool _S010000100;
-    public ButtonScript _B010000010;
-    private bool _S010000010;
-    public ButtonScript _B010000001;
-    private bool _S010000001;
-    public ButtonScript _B001100000;
-    private bool _S001100000;
-    public ButtonScript _B001010000;
-    private bool _S001010000;
-    public ButtonScript _B001001000;
-    private bool _S001001000;
-    public ButtonScript _B001000100;
-    private bool _S001000100;
-    public ButtonScript _B001000010;
-    private bool _S001000010;
-    public ButtonScript _B001000001;
-    private bool _S001000001;
-    public ButtonScript _B000110000;
-    private bool _S000110000;
-    public ButtonScript _B000101000;
-    private bool _S000101000;
-    public ButtonScript _B000100100;
-    private bool _S000100100;
-    public ButtonScript _B000100010;
-    private bool _S000100010;
-    public ButtonScript _B000100001;
-    private bool _S000100001;
-    public ButtonScript _B000011000;
-    private bool _S000011000;
-    public ButtonScript _B000010100;
-    private bool _S000010100;
-    public ButtonScript _B000010010;
-    private bool _S000010010;
-    public ButtonScript _B000010001;
-    private bool _S000010001;
-    public ButtonScript _B000001100;
-    private bool _S000001100;
-    public ButtonScript _B000001010;
-    private bool _S000001010;
-    public ButtonScript _B000001001;
-    private bool _S000001001;
-    public ButtonScript _B000000110;
-    private bool _S000000110;
-    public ButtonScript _B000000101;
-    private bool _S000000101;
-    public ButtonScript _B000000011;
-    private bool _S000000011;
-
-    //3 vivos
-    public ButtonScript _B111000000;
-    private bool _S111000000;
-    public ButtonScript _B110100000;
-    private bool _S110100000;
-    public ButtonScript _B110010000;
-    private bool _S110010000;
-    public ButtonScript _B110001000;
-    private bool _S110001000;
-    public ButtonScript _B110000100;
-    private bool _S110000100;
-    public ButtonScript _B110000010;
-    private bool _S110000010;
-    public ButtonScript _B110000001;
-    private bool _S110000001;
-    public ButtonScript _B101100000;
-    private bool _S101100000;
-    public ButtonScript _B101010000;
-    private bool _S101010000;
-    public ButtonScript _B101001000;
-    private bool _S101001000;
-    public ButtonScript _B101000100;
-    private bool _S101000100;
-    public ButtonScript _B101000010;
-    private bool _S101000010;
-    public ButtonScript _B101000001;
-    private bool _S101000001;
-    public ButtonScript _B100110000;
-    private bool _S100110000;
-    public ButtonScript _B100101000;
-    private bool _S100101000;
-    public ButtonScript _B100100100;
-    private bool _S100100100;
-    public ButtonScript _B100100010;
-    private bool _S100100010;
-    public ButtonScript _B100100001;
-    private bool _S100100001;
-    public ButtonScript _B100011000;
-    private bool _S100011000;
-    public ButtonScript _B100010100;
-    private bool _S100010100;
-    public ButtonScript _B100010010;
-    private bool _S100010010;
-    public ButtonScript _B100010001;
-    private bool _S100010001;
-    public ButtonScript _B100001100;
-    private bool _S100001100;
-    public ButtonScript _B100001010;
-    private bool _S100001010;
-    public ButtonScript _B100001001;
-    private bool _S100001001;
-    public ButtonScript _B100000110;
-    private bool _S100000110;
-    public ButtonScript _B100000101;
-    private bool _S100000101;
-    public ButtonScript _B100000011;
-    private bool _S100000011;
-    public ButtonScript _B011100000;
-    private bool _S011100000;
-    public ButtonScript _B011010000;
-    private bool _S011010000;
-    public ButtonScript _B011001000;
-    private bool _S011001000;
-    public ButtonScript _B011000100;
-    private bool _S011000100;
-    public ButtonScript _B011000010;
-    private bool _S011000010;
-    public ButtonScript _B011000001;
-    private bool _S011000001;
-    public ButtonScript _B010110000;
-    private bool _S010110000;
-    public ButtonScript _B010101000;
-    private bool _S010101000;
-    public ButtonScript _B010100100;
-    private bool _S010100100;
-    public ButtonScript _B010100010;
-    private bool _S010100010;
-    public ButtonScript _B010100001;
-    private bool _S010100001;
-    public ButtonScript _B010011000;
-    private bool _S010011000;
-    public ButtonScript _B010010100;
-    private bool _S010010100;
-    public ButtonScript _B010010010;
-    private bool _S010010010;
-    public ButtonScript _B010010001;
-    private bool _S010010001;
-    public ButtonScript _B010001100;
-    private bool _S010001100;
-    public ButtonScript _B010001010;
-    private bool _S010001010;
-    public ButtonScript _B010001001;
-    private bool _S010001001;
-    public ButtonScript _B010000110;
-    private bool _S010000110;
-    public ButtonScript _B010000101;
-    private bool _S010000101;
-    public ButtonScript _B010000011;
-    private bool _S010000011;
-    public ButtonScript _B001110000;
-    private bool _S001110000;
-    public ButtonScript _B001101000;
-    private bool _S001101000;
-    public ButtonScript _B001100100;
-    private bool _S001100100;
-    public ButtonScript _B001100010;
-    private bool _S001100010;
-    public ButtonScript _B001100001;
-    private bool _S001100001;
-    public ButtonScript _B001011000;
-    private bool _S001011000;
-    public ButtonScript _B001010100;
-    private bool _S001010100;
-    public ButtonScript _B001010010;
-    private bool _S001010010;
-    public ButtonScript _B001010001;
-    private bool _S001010001;
-    public ButtonScript _B001001100;
-    private bool _S001001100;
-    public ButtonScript _B001001010;
-    private bool _S001001010;
-    public ButtonScript _B001001001;
-    private bool _S001001001;
-    public ButtonScript _B001000110;
-    private bool _S001000110;
-    public ButtonScript _B001000101;
-    private bool _S001000101;
-    public ButtonScript _B001000011;
-    private bool _S001000011;
-    public ButtonScript _B000111000;
-    private bool _S000111000;
-    public ButtonScript _B000110100;
-    private bool _S000110100;
-    public ButtonScript _B000110010;
-    private bool _S000110010;
-    public ButtonScript _B000110001;
-    private bool _S000110001;
-    public ButtonScript _B000101100;
-    private bool _S000101100;
-    public ButtonScript _B000101010;
-    private bool _S000101010;
-    public ButtonScript _B000101001;
-    private bool _S000101001;
-    public ButtonScript _B000100110;
-    private bool _S000100110;
-    public ButtonScript _B000100101;
-    private bool _S000100101;
-    public ButtonScript _B000100011;
-    private bool _S000100011;
-    public ButtonScript _B000011100;
-    private bool _S000011100;
-    public ButtonScript _B000011010;
-    private bool _S000011010;
-    public ButtonScript _B000011001;
-    private bool _S000011001;
-    public ButtonScript _B000010110;
-    private bool _S000010110;
-    public ButtonScript _B000010101;
-    private bool _S000010101;
-    public ButtonScript _B000010011;
-    private bool _S000010011;
-    public ButtonScript _B000001110;
-    private bool _S000001110;
-    public ButtonScript _B000001101;
-    private bool _S000001101;
-    public ButtonScript _B000001011;
-    private bool _S000001011;
-    public ButtonScript _B000000111;
-    private bool _S000000111;
-
-    //4 vivos
-    public ButtonScript _B111100000;
-    private bool _S111100000;
-    public ButtonScript _B111010000;
-    private bool _S111010000;
-    public ButtonScript _B111001000;
-    private bool _S111001000;
-    public ButtonScript _B111000100;
-    private bool _S111000100;
-    public ButtonScript _B111000010;
-    private bool _S111000010;
-    public ButtonScript _B111000001;
-    private bool _S111000001;
-    public ButtonScript _B110110000;
-    private bool _S110110000;
-    public ButtonScript _B110101000;
-    private bool _S110101000;
-    public ButtonScript _B110100100;
-    private bool _S110100100;
-    public ButtonScript _B110100010;
-    private bool _S110100010;
-    public ButtonScript _B110100001;
-    private bool _S110100001;
-    public ButtonScript _B110011000;
-    private bool _S110011000;
-    public ButtonScript _B110010100;
-    private bool _S110010100;
-    public ButtonScript _B110010010;
-    private bool _S110010010;
-    public ButtonScript _B110010001;
-    private bool _S110010001;
-    public ButtonScript _B110001100;
-    private bool _S110001100;
-    public ButtonScript _B110001010;
-    private bool _S110001010;
-    public ButtonScript _B110001001;
-    private bool _S110001001;
-    public ButtonScript _B110000110;
-    private bool _S110000110;
-    public ButtonScript _B110000101;
-    private bool _S110000101;
-    public ButtonScript _B110000011;
-    private bool _S110000011;
-    public ButtonScript _B101110000;
-    private bool _S101110000;
-    public ButtonScript _B101101000;
-    private bool _S101101000;
-    public ButtonScript _B101100100;
-    private bool _S101100100;
-    public ButtonScript _B101100010;
-    private bool _S101100010;
-    public ButtonScript _B101100001;
-    private bool _S101100001;
-    public ButtonScript _B101011000;
-    private bool _S101011000;
-    public ButtonScript _B101010100;
-    private bool _S101010100;
-    public ButtonScript _B101010010;
-    private bool _S101010010;
-    public ButtonScript _B101010001;
-    private bool _S101010001;
-    public ButtonScript _B101001100;
-    private bool _S101001100;
-    public ButtonScript _B101001010;
-    private bool _S101001010;
-    public ButtonScript _B101001001;
-    private bool _S101001001;
-    public ButtonScript _B101000110;
-    private bool _S101000110;
-    public ButtonScript _B101000101;
-    private bool _S101000101;
-    public ButtonScript _B101000011;
-    private bool _S101000011;
-    public ButtonScript _B100111000;
-    private bool _S100111000;
-    public ButtonScript _B100110100;
-    private bool _S100110100;
-    public ButtonScript _B100110010;
-    private bool _S100110010;
-    public ButtonScript _B100110001;
-    private bool _S100110001;
-    public ButtonScript _B100101100;
-    private bool _S100101100;
-    public ButtonScript _B100101010;
-    private bool _S100101010;
-    public ButtonScript _B100101001;
-    private bool _S100101001;
-    public ButtonScript _B100100110;
-    private bool _S100100110;
-    public ButtonScript _B100100101;
-    private bool _S100100101;
-    public ButtonScript _B100100011;
-    private bool _S100100011;
-    public ButtonScript _B100011100;
-    private bool _S100011100;
-    public ButtonScript _B100011010;
-    private bool _S100011010;
-    public ButtonScript _B100011001;
-    private bool _S100011001;
-    public ButtonScript _B100010110;
-    private bool _S100010110;
-    public ButtonScript _B100010101;
-    private bool _S100010101;
-    public ButtonScript _B100010011;
-    private bool _S100010011;
-    public ButtonScript _B100001110;
-    private bool _S100001110;
-    public ButtonScript _B100001101;
-    private bool _S100001101;
-    public ButtonScript _B100001011;
-    private bool _S100001011;
-    public ButtonScript _B100000111;
-    private bool _S100000111;
-    public ButtonScript _B011110000;
-    private bool _S011110000;
-    public ButtonScript _B011101000;
-    private bool _S011101000;
-    public ButtonScript _B011100100;
-    private bool _S011100100;
-    public ButtonScript _B011100010;
-    private bool _S011100010;
-    public ButtonScript _B011100001;
-    private bool _S011100001;
-    public ButtonScript _B011011000;
-    private bool _S011011000;
-    public ButtonScript _B011010100;
-    private bool _S011010100;
-    public ButtonScript _B011010010;
-    private bool _S011010010;
-    public ButtonScript _B011010001;
-    private bool _S011010001;
-    public ButtonScript _B011001100;
-    private bool _S011001100;
-    public ButtonScript _B011001010;
-    private bool _S011001010;
-    public ButtonScript _B011001001;
-    private bool _S011001001;
-    public ButtonScript _B011000110;
-    private bool _S011000110;
-    public ButtonScript _B011000101;
-    private bool _S011000101;
-    public ButtonScript _B011000011;
-    private bool _S011000011;
-    public ButtonScript _B010111000;
-    private bool _S010111000;
-    public ButtonScript _B010110100;
-    private bool _S010110100;
-    public ButtonScript _B010110010;
-    private bool _S010110010;
-    public ButtonScript _B010110001;
-    private bool _S010110001;
-    public ButtonScript _B010101100;
-    private bool _S010101100;
-    public ButtonScript _B010101010;
-    private bool _S010101010;
-    public ButtonScript _B010101001;
-    private bool _S010101001;
-    public ButtonScript _B010100110;
-    private bool _S010100110;
-    public ButtonScript _B010100101;
-    private bool _S010100101;
-    public ButtonScript _B010100011;
-    private bool _S010100011;
-    public ButtonScript _B010011100;
-    private bool _S010011100;
-    public ButtonScript _B010011010;
-    private bool _S010011010;
-    public ButtonScript _B010011001;
-    private bool _S010011001;
-    public ButtonScript _B010010110;
-    private bool _S010010110;
-    public ButtonScript _B010010101;
-    private bool _S010010101;
-    public ButtonScript _B010010011;
-    private bool _S010010011;
-    public ButtonScript _B010001110;
-    private bool _S010001110;
-    public ButtonScript _B010001101;
-    private bool _S010001101;
-    public ButtonScript _B010001011;
-    private bool _S010001011;
-    public ButtonScript _B010000111;
-    private bool _S010000111;
-    public ButtonScript _B001111000;
-    private bool _S001111000;
-    public ButtonScript _B001110100;
-    private bool _S001110100;
-    public ButtonScript _B001110010;
-    private bool _S001110010;
-    public ButtonScript _B001110001;
-    private bool _S001110001;
-    public ButtonScript _B001101100;
-    private bool _S001101100;
-    public ButtonScript _B001101010;
-    private bool _S001101010;
-    public ButtonScript _B001101001;
-    private bool _S001101001;
-    public ButtonScript _B001100110;
-    private bool _S001100110;
-    public ButtonScript _B001100101;
-    private bool _S001100101;
-    public ButtonScript _B001100011;
-    private bool _S001100011;
-    public ButtonScript _B001011100;
-    private bool _S001011100;
-    public ButtonScript _B001011010;
-    private bool _S001011010;
-    public ButtonScript _B001011001;
-    private bool _S001011001;
-    public ButtonScript _B001010110;
-    private bool _S001010110;
-    public ButtonScript _B001010101;
-    private bool _S001010101;
-    public ButtonScript _B001010011;
-    private bool _S001010011;
-    public ButtonScript _B001001110;
-    private bool _S001001110;
-    public ButtonScript _B001001101;
-    private bool _S001001101;
-    public ButtonScript _B001001011;
-    private bool _S001001011;
-    public ButtonScript _B001000111;
-    private bool _S001000111;
-    public ButtonScript _B000111100;
-    private bool _S000111100;
-    public ButtonScript _B000111010;
-    private bool _S000111010;
-    public ButtonScript _B000111001;
-    private bool _S000111001;
-    public ButtonScript _B000110110;
-    private bool _S000110110;
-    public ButtonScript _B000110101;
-    private bool _S000110101;
-    public ButtonScript _B000110011;
-    private bool _S000110011;
-    public ButtonScript _B000101110;
-    private bool _S000101110;
-    public ButtonScript _B000101101;
-    private bool _S000101101;
-    public ButtonScript _B000101011;
-    private bool _S000101011;
-    public ButtonScript _B000100111;
-    private bool _S000100111;
-    public ButtonScript _B000011110;
-    private bool _S000011110;
-    public ButtonScript _B000011101;
-    private bool _S000011101;
-    public ButtonScript _B000011011;
-    private bool _S000011011;
-    public ButtonScript _B000010111;
-    private bool _S000010111;
-    public ButtonScript _B000001111;
-    private bool _S000001111;
-
-    //5 vivos
-    public ButtonScript _B111110000;
-    private bool _S111110000;
-    public ButtonScript _B111101000;
-    private bool _S111101000;
-    public ButtonScript _B111100100;
-    private bool _S111100100;
-    public ButtonScript _B111100010;
-    private bool _S111100010;
-    public ButtonScript _B111100001;
-    private bool _S111100001;
-    public ButtonScript _B111011000;
-    private bool _S111011000;
-    public ButtonScript _B111010100;
-    private bool _S111010100;
-    public ButtonScript _B111010010;
-    private bool _S111010010;
-    public ButtonScript _B111010001;
-    private bool _S111010001;
-    public ButtonScript _B111001100;
-    private bool _S111001100;
-    public ButtonScript _B111001010;
-    private bool _S111001010;
-    public ButtonScript _B111001001;
-    private bool _S111001001;
-    public ButtonScript _B111000110;
-    private bool _S111000110;
-    public ButtonScript _B111000101;
-    private bool _S111000101;
-    public ButtonScript _B111000011;
-    private bool _S111000011;
-    public ButtonScript _B110111000;
-    private bool _S110111000;
-    public ButtonScript _B110110100;
-    private bool _S110110100;
-    public ButtonScript _B110110010;
-    private bool _S110110010;
-    public ButtonScript _B110110001;
-    private bool _S110110001;
-    public ButtonScript _B110101100;
-    private bool _S110101100;
-    public ButtonScript _B110101010;
-    private bool _S110101010;
-    public ButtonScript _B110101001;
-    private bool _S110101001;
-    public ButtonScript _B110100110;
-    private bool _S110100110;
-    public ButtonScript _B110100101;
-    private bool _S110100101;
-    public ButtonScript _B110100011;
-    private bool _S110100011;
-    public ButtonScript _B110011100;
-    private bool _S110011100;
-    public ButtonScript _B110011010;
-    private bool _S110011010;
-    public ButtonScript _B110011001;
-    private bool _S110011001;
-    public ButtonScript _B110010110;
-    private bool _S110010110;
-    public ButtonScript _B110010101;
-    private bool _S110010101;
-    public ButtonScript _B110010011;
-    private bool _S110010011;
-    public ButtonScript _B110001110;
-    private bool _S110001110;
-    public ButtonScript _B110001101;
-    private bool _S110001101;
-    public ButtonScript _B110001011;
-    private bool _S110001011;
-    public ButtonScript _B110000111;
-    private bool _S110000111;
-    public ButtonScript _B101111000;
-    private bool _S101111000;
-    public ButtonScript _B101110100;
-    private bool _S101110100;
-    public ButtonScript _B101110010;
-    private bool _S101110010;
-    public ButtonScript _B101110001;
-    private bool _S101110001;
-    public ButtonScript _B101101100;
-    private bool _S101101100;
-    public ButtonScript _B101101010;
-    private bool _S101101010;
-    public ButtonScript _B101101001;
-    private bool _S101101001;
-    public ButtonScript _B101100110;
-    private bool _S101100110;
-    public ButtonScript _B101100101;
-    private bool _S101100101;
-    public ButtonScript _B101100011;
-    private bool _S101100011;
-    public ButtonScript _B101011100;
-    private bool _S101011100;
-    public ButtonScript _B101011010;
-    private bool _S101011010;
-    public ButtonScript _B101011001;
-    private bool _S101011001;
-    public ButtonScript _B101010110;
-    private bool _S101010110;
-    public ButtonScript _B101010101;
-    private bool _S101010101;
-    public ButtonScript _B101010011;
-    private bool _S101010011;
-    public ButtonScript _B101001110;
-    private bool _S101001110;
-    public ButtonScript _B101001101;
-    private bool _S101001101;
-    public ButtonScript _B101001011;
-    private bool _S101001011;
-    public ButtonScript _B101000111;
-    private bool _S101000111;
-    public ButtonScript _B100111100;
-    private bool _S100111100;
-    public ButtonScript _B100111010;
-    private bool _S100111010;
-    public ButtonScript _B100111001;
-    private bool _S100111001;
-    public ButtonScript _B100110110;
-    private bool _S100110110;
-    public ButtonScript _B100110101;
-    private bool _S100110101;
-    public ButtonScript _B100110011;
-    private bool _S100110011;
-    public ButtonScript _B100101110;
-    private bool _S100101110;
-    public ButtonScript _B100101101;
-    private bool _S100101101;
-    public ButtonScript _B100101011;
-    private bool _S100101011;
-    public ButtonScript _B100100111;
-    private bool _S100100111;
-    public ButtonScript _B100011110;
-    private bool _S100011110;
-    public ButtonScript _B100011101;
-    private bool _S100011101;
-    public ButtonScript _B100011011;
-    private bool _S100011011;
-    public ButtonScript _B100010111;
-    private bool _S100010111;
-    public ButtonScript _B100001111;
-    private bool _S100001111;
-    public ButtonScript _B011111000;
-    private bool _S011111000;
-    public ButtonScript _B011110100;
-    private bool _S011110100;
-    public ButtonScript _B011110010;
-    private bool _S011110010;
-    public ButtonScript _B011110001;
-    private bool _S011110001;
-    public ButtonScript _B011101100;
-    private bool _S011101100;
-    public ButtonScript _B011101010;
-    private bool _S011101010;
-    public ButtonScript _B011101001;
-    private bool _S011101001;
-    public ButtonScript _B011100110;
-    private bool _S011100110;
-    public ButtonScript _B011100101;
-    private bool _S011100101;
-    public ButtonScript _B011100011;
-    private bool _S011100011;
-    public ButtonScript _B011011100;
-    private bool _S011011100;
-    public ButtonScript _B011011010;
-    private bool _S011011010;
-    public ButtonScript _B011011001;
-    private bool _S011011001;
-    public ButtonScript _B011010110;
-    private bool _S011010110;
-    public ButtonScript _B011010101;
-    private bool _S011010101;
-    public ButtonScript _B011010011;
-    private bool _S011010011;
-    public ButtonScript _B011001110;
-    private bool _S011001110;
-    public ButtonScript _B011001101;
-    private bool _S011001101;
-    public ButtonScript _B011001011;
-    private bool _S011001011;
-    public ButtonScript _B011000111;
-    private bool _S011000111;
-    public ButtonScript _B010111100;
-    private bool _S010111100;
-    public ButtonScript _B010111010;
-    private bool _S010111010;
-    public ButtonScript _B010111001;
-    private bool _S010111001;
-    public ButtonScript _B010110110;
-    private bool _S010110110;
-    public ButtonScript _B010110101;
-    private bool _S010110101;
-    public ButtonScript _B010110011;
-    private bool _S010110011;
-    public ButtonScript _B010101110;
-    private bool _S010101110;
-    public ButtonScript _B010101101;
-    private bool _S010101101;
-    public ButtonScript _B010101011;
-    private bool _S010101011;
-    public ButtonScript _B010100111;
-    private bool _S010100111;
-    public ButtonScript _B010011110;
-    private bool _S010011110;
-    public ButtonScript _B010011101;
-    private bool _S010011101;
-    public ButtonScript _B010011011;
-    private bool _S010011011;
-    public ButtonScript _B010010111;
-    private bool _S010010111;
-    public ButtonScript _B010001111;
-    private bool _S010001111;
-    public ButtonScript _B001111100;
-    private bool _S001111100;
-    public ButtonScript _B001111010;
-    private bool _S001111010;
-    public ButtonScript _B001111001;
-    private bool _S001111001;
-    public ButtonScript _B001110110;
-    private bool _S001110110;
-    public ButtonScript _B001110101;
-    private bool _S001110101;
-    public ButtonScript _B001110011;
-    private bool _S001110011;
-    public ButtonScript _B001101110;
-    private bool _S001101110;
-    public ButtonScript _B001101101;
-    private bool _S001101101;
-    public ButtonScript _B001101011;
-    private bool _S001101011;
-    public ButtonScript _B001100111;
-    private bool _S001100111;
-    public ButtonScript _B001011110;
-    private bool _S001011110;
-    public ButtonScript _B001011101;
-    private bool _S001011101;
-    public ButtonScript _B001011011;
-    private bool _S001011011;
-    public ButtonScript _B001010111;
-    private bool _S001010111;
-    public ButtonScript _B001001111;
-    private bool _S001001111;
-    public ButtonScript _B000111110;
-    private bool _S000111110;
-    public ButtonScript _B000111101;
-    private bool _S000111101;
-    public ButtonScript _B000111011;
-    private bool _S000111011;
-    public ButtonScript _B000110111;
-    private bool _S000110111;
-    public ButtonScript _B000101111;
-    private bool _S000101111;
-    public ButtonScript _B000011111;
-    private bool _S000011111;
-
-    //6 vivos
-    public ButtonScript _B111111000;
-    private bool _S111111000;
-    public ButtonScript _B111110100;
-    private bool _S111110100;
-    public ButtonScript _B111110010;
-    private bool _S111110010;
-    public ButtonScript _B111110001;
-    private bool _S111110001;
-    public ButtonScript _B111101100;
-    private bool _S111101100;
-    public ButtonScript _B111101010;
-    private bool _S111101010;
-    public ButtonScript _B111101001;
-    private bool _S111101001;
-    public ButtonScript _B111100110;
-    private bool _S111100110;
-    public ButtonScript _B111100101;
-    private bool _S111100101;
-    public ButtonScript _B111100011;
-    private bool _S111100011;
-    public ButtonScript _B111011100;
-    private bool _S111011100;
-    public ButtonScript _B111011010;
-    private bool _S111011010;
-    public ButtonScript _B111011001;
-    private bool _S111011001;
-    public ButtonScript _B111010110;
-    private bool _S111010110;
-    public ButtonScript _B111010101;
-    private bool _S111010101;
-    public ButtonScript _B111010011;
-    private bool _S111010011;
-    public ButtonScript _B111001110;
-    private bool _S111001110;
-    public ButtonScript _B111001101;
-    private bool _S111001101;
-    public ButtonScript _B111001011;
-    private bool _S111001011;
-    public ButtonScript _B111000111;
-    private bool _S111000111;
-    public ButtonScript _B110111100;
-    private bool _S110111100;
-    public ButtonScript _B110111010;
-    private bool _S110111010;
-    public ButtonScript _B110111001;
-    private bool _S110111001;
-    public ButtonScript _B110110110;
-    private bool _S110110110;
-    public ButtonScript _B110110101;
-    private bool _S110110101;
-    public ButtonScript _B110110011;
-    private bool _S110110011;
-    public ButtonScript _B110101110;
-    private bool _S110101110;
-    public ButtonScript _B110101101;
-    private bool _S110101101;
-    public ButtonScript _B110101011;
-    private bool _S110101011;
-    public ButtonScript _B110100111;
-    private bool _S110100111;
-    public ButtonScript _B110011110;
-    private bool _S110011110;
-    public ButtonScript _B110011101;
-    private bool _S110011101;
-    public ButtonScript _B110011011;
-    private bool _S110011011;
-    public ButtonScript _B110010111;
-    private bool _S110010111;
-    public ButtonScript _B110001111;
-    private bool _S110001111;
-    public ButtonScript _B101111100;
-    private bool _S101111100;
-    public ButtonScript _B101111010;
-    private bool _S101111010;
-    public ButtonScript _B101111001;
-    private bool _S101111001;
-    public ButtonScript _B101110110;
-    private bool _S101110110;
-    public ButtonScript _B101110101;
-    private bool _S101110101;
-    public ButtonScript _B101110011;
-    private bool _S101110011;
-    public ButtonScript _B101101110;
-    private bool _S101101110;
-    public ButtonScript _B101101101;
-    private bool _S101101101;
-    public ButtonScript _B101101011;
-    private bool _S101101011;
-    public ButtonScript _B101100111;
-    private bool _S101100111;
-    public ButtonScript _B101011110;
-    private bool _S101011110;
-    public ButtonScript _B101011101;
-    private bool _S101011101;
-    public ButtonScript _B101011011;
-    private bool _S101011011;
-    public ButtonScript _B101010111;
-    private bool _S101010111;
-    public ButtonScript _B101001111;
-    private bool _S101001111;
-    public ButtonScript _B100111110;
-    private bool _S100111110;
-    public ButtonScript _B100111101;
-    private bool _S100111101;
-    public ButtonScript _B100111011;
-    private bool _S100111011;
-    public ButtonScript _B100110111;
-    private bool _S100110111;
-    public ButtonScript _B100101111;
-    private bool _S100101111;
-    public ButtonScript _B100011111;
-    private bool _S100011111;
-    public ButtonScript _B011111100;
-    private bool _S011111100;
-    public ButtonScript _B011111010;
-    private bool _S011111010;
-    public ButtonScript _B011111001;
-    private bool _S011111001;
-    public ButtonScript _B011110110;
-    private bool _S011110110;
-    public ButtonScript _B011110101;
-    private bool _S011110101;
-    public ButtonScript _B011110011;
-    private bool _S011110011;
-    public ButtonScript _B011101110;
-    private bool _S011101110;
-    public ButtonScript _B011101101;
-    private bool _S011101101;
-    public ButtonScript _B011101011;
-    private bool _S011101011;
-    public ButtonScript _B011100111;
-    private bool _S011100111;
-    public ButtonScript _B011011110;
-    private bool _S011011110;
-    public ButtonScript _B011011101;
-    private bool _S011011101;
-    public ButtonScript _B011011011;
-    private bool _S011011011;
-    public ButtonScript _B011010111;
-    private bool _S011010111;
-    public ButtonScript _B011001111;
-    private bool _S011001111;
-    public ButtonScript _B010111110;
-    private bool _S010111110;
-    public ButtonScript _B010111101;
-    private bool _S010111101;
-    public ButtonScript _B010111011;
-    private bool _S010111011;
-    public ButtonScript _B010110111;
-    private bool _S010110111;
-    public ButtonScript _B010101111;
-    private bool _S010101111;
-    public ButtonScript _B010011111;
-    private bool _S010011111;
-    public ButtonScript _B001111110;
-    private bool _S001111110;
-    public ButtonScript _B001111101;
-    private bool _S001111101;
-    public ButtonScript _B001111011;
-    private bool _S001111011;
-    public ButtonScript _B001110111;
-    private bool _S001110111;
-    public ButtonScript _B001101111;
-    private bool _S001101111;
-    public ButtonScript _B001011111;
-    private bool _S001011111;
-    public ButtonScript _B000111111;
-    private bool _S000111111;
-
-    //7 vivos
-    public ButtonScript _B111111100;
-    private bool _S111111100;
-    public ButtonScript _B111111010;
-    private bool _S111111010;
-    public ButtonScript _B111111001;
-    private bool _S111111001;
-    public ButtonScript _B111110110;
-    private bool _S111110110;
-    public ButtonScript _B111110101;
-    private bool _S111110101;
-    public ButtonScript _B111110011;
-    private bool _S111110011;
-    public ButtonScript _B111101110;
-    private bool _S111101110;
-    public ButtonScript _B111101101;
-    private bool _S111101101;
-    public ButtonScript _B111101011;
-    private bool _S111101011;
-    public ButtonScript _B111100111;
-    private bool _S111100111;
-    public ButtonScript _B111011110;
-    private bool _S111011110;
-    public ButtonScript _B111011101;
-    private bool _S111011101;
-    public ButtonScript _B111011011;
-    private bool _S111011011;
-    public ButtonScript _B111010111;
-    private bool _S111010111;
-    public ButtonScript _B111001111;
-    private bool _S111001111;
-    public ButtonScript _B110111110;
-    private bool _S110111110;
-    public ButtonScript _B110111101;
-    private bool _S110111101;
-    public ButtonScript _B110111011;
-    private bool _S110111011;
-    public ButtonScript _B110110111;
-    private bool _S110110111;
-    public ButtonScript _B110101111;
-    private bool _S110101111;
-    public ButtonScript _B110011111;
-    private bool _S110011111;
-    public ButtonScript _B101111110;
-    private bool _S101111110;
-    public ButtonScript _B101111101;
-    private bool _S101111101;
-    public ButtonScript _B101111011;
-    private bool _S101111011;
-    public ButtonScript _B101110111;
-    private bool _S101110111;
-    public ButtonScript _B101101111;
-    private bool _S101101111;
-    public ButtonScript _B101011111;
-    private bool _S101011111;
-    public ButtonScript _B100111111;
-    private bool _S100111111;
-    public ButtonScript _B011111110;
-    private bool _S011111110;
-    public ButtonScript _B011111101;
-    private bool _S011111101;
-    public ButtonScript _B011111011;
-    private bool _S011111011;
-    public ButtonScript _B011110111;
-    private bool _S011110111;
-    public ButtonScript _B011101111;
-    private bool _S011101111;
-    public ButtonScript _B011011111;
-    private bool _S011011111;
-    public ButtonScript _B010111111;
-    private bool _S010111111;
-    public ButtonScript _B001111111;
-    private bool _S001111111;
-
-    //8 vivos
-    public ButtonScript _B111111110;
-    private bool _S111111110;
-    public ButtonScript _B111111101;
-    private bool _S111111101;
-    public ButtonScript _B111111011;
-    private bool _S111111011;
-    public ButtonScript _B111110111;
-    private bool _S111110111;
-    public ButtonScript _B111101111;
-    private bool _S111101111;
-    public ButtonScript _B111011111;
-    private bool _S111011111;
-    public ButtonScript _B110111111;
-    private bool _S110111111;
-    public ButtonScript _B101111111;
-    private bool _S101111111;
-    public ButtonScript _B011111111;
-    private bool _S011111111;
-
-    //9 vivos
-    public ButtonScript _B111111111;
-    private bool _S111111111;
-
-    #endregion
 
     public Button _startStop;
     private bool _running = false;
 
     [Header("INPUT-FIELD")]
-    public TMP_InputField _inputField;
+    public TMP_InputField _inputWait;
     private float _wait = 0.1f;
     private float _timer;
+
+    public TMP_InputField _inputState;
+    private int _state;
+
+    public TMP_InputField _inputLive;
+    private List<int> _liveVals;
+
+    public TMP_InputField _inputDead;
+    private List<int> _deadVals;
+
+    public TMP_InputField _inputBirth;
+    private List<int> _birthVals;
+
 
     [Header("GENERATION-FIELD")]
     public TextMeshProUGUI _genTMP;
@@ -1113,7 +66,7 @@ public class CelularAutomat2D : MonoBehaviour
 
     public void Start()
     {
-        _inputField.text = "Wait: " + _wait.ToString("F1");
+        _inputWait.text = "Wait: " + _wait.ToString("F1");
 
         _size = _preCell.transform.localScale.x;
     }
@@ -1125,16 +78,161 @@ public class CelularAutomat2D : MonoBehaviour
             _timer += Time.deltaTime;
             if (_timer >= _wait)
             {
-                OperateGeneration();
+
                 _timer = 0.0f;
             }
         }
     }
 
-    public void OperateGeneration()
+    public int Neighbors(int posX, int posY)
     {
-        
+        int neighborsCount = 0;
 
+        for (int x = -1; x <= 2; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                int tempX = x;
+                int tempY = y;
+
+                if (tempX == 0 && tempY == 0)
+                {
+                    continue; // Skip self
+                }
+
+                //SET X
+                if (posX == 0 && x == -1)
+                {
+                    if(wrap)
+                    {
+                        tempX = _parentMatrix.Count - 1;
+                    }
+                    else
+                    {
+                        continue; // Skip self
+                    }
+                }
+                else if(posX == _parentMatrix.Count && x == +1)
+                {
+                    if (wrap)
+                    {
+                        tempX = 0;
+                    }
+                    else
+                    {
+                        continue; // Skip self
+                    }
+                }
+                else
+                {
+                    tempX += posX;
+                }
+
+                //SET Y
+                if(posY == 0 && y == -1)
+                {
+                    if (wrap)
+                    {
+                        tempY = _parentMatrix[0].Count - 1;
+                    }
+                    else
+                    {
+                        continue; // Skip self
+                    }
+                }
+                else if (posY == _parentMatrix[0].Count && y == +1)
+                {
+                    if (wrap)
+                    {
+                        tempX = 0;
+                    }
+                    else
+                    {
+                        continue; // Skip self
+                    }
+                }
+                else
+                {
+                    tempY += posY;
+                }
+                
+                if (_parentMatrix[posX + x][posY + y] > 0)
+                {
+                    neighborsCount++;
+                }
+            }
+        }
+
+        return neighborsCount;
+    }
+
+    public void SetChildren()
+    {
+        for (int x = 0; x < _parentMatrix.Count;  x++)
+        {
+            for(int y = 0; y< _parentMatrix[x].Count; y++)
+            {
+                int liveNeighbors = Neighbors(x, y);
+                int self = _parentMatrix[x][y];
+                
+                _childMatrix[x][y] =  OperateChild(self, liveNeighbors);
+            }
+        }
+    }
+
+    public int OperateChild(int self, int neighbors)
+    {
+        if(self == 0)
+        {
+            for(int i = 0; i < _birthVals.Count; i++)
+            {
+                if (_birthVals[i] == neighbors)
+                {
+                    return _state;
+                }
+            }
+        }
+        else if(self == _state)
+        {
+            for (int i = 0; i < _liveVals.Count; i++)
+            {
+                if (_liveVals[i] == neighbors)
+                {
+                    return _state;
+                }
+            }
+            for (int i = 0; i < _deadVals.Count; i++)
+            {
+                if (_deadVals[i] == neighbors)
+                {
+                    return _state - 1;
+                }
+            }
+        }
+        else if(self > 0)
+        {
+            return self - 1;
+        }
+
+        return 0;
+    }
+
+    private void MakeFirstGeneration()
+    {
+
+    }
+
+    private void SetUpMatrix()
+    {
+        for (int x = 0; x < _size; x++)
+        {
+            for (int y = 0; y < _size; y++)
+            {
+                bool state;
+
+                state = (Random.value > 0.5f);
+            }
+        }
     }
 
     public void SetState(ButtonScript button)

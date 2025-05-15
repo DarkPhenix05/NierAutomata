@@ -122,7 +122,9 @@ public class GameOfLife : MonoBehaviour
             for (int dy = -1; dy <= 1; dy++)
             {
                 if (dx == 0 && dy == 0)
+                {
                     continue; // Skip self
+                }
 
                 int nx = x + dx;
                 int ny = y + dy;
