@@ -849,7 +849,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1689456281}
-        m_TargetAssemblyTypeName: CelularAutomat2D, Assembly-CSharp
+        m_TargetAssemblyTypeName: CelularAutomat3D, Assembly-CSharp
         m_MethodName: SetState
         m_Mode: 1
         m_Arguments:
@@ -867,7 +867,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1689456281}
-        m_TargetAssemblyTypeName: CelularAutomat2D, Assembly-CSharp
+        m_TargetAssemblyTypeName: CelularAutomat3D, Assembly-CSharp
         m_MethodName: SelectState
         m_Mode: 1
         m_Arguments:
@@ -882,7 +882,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1689456281}
-        m_TargetAssemblyTypeName: CelularAutomat2D, Assembly-CSharp
+        m_TargetAssemblyTypeName: CelularAutomat3D, Assembly-CSharp
         m_MethodName: DeselectState
         m_Mode: 1
         m_Arguments:
@@ -1694,7 +1694,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1689456281}
-        m_TargetAssemblyTypeName: CelularAutomat2D, Assembly-CSharp
+        m_TargetAssemblyTypeName: CelularAutomat3D, Assembly-CSharp
         m_MethodName: SetWait
         m_Mode: 1
         m_Arguments:
@@ -1712,7 +1712,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1689456281}
-        m_TargetAssemblyTypeName: CelularAutomat2D, Assembly-CSharp
+        m_TargetAssemblyTypeName: CelularAutomat3D, Assembly-CSharp
         m_MethodName: SelectWait
         m_Mode: 1
         m_Arguments:
@@ -1727,7 +1727,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1689456281}
-        m_TargetAssemblyTypeName: CelularAutomat2D, Assembly-CSharp
+        m_TargetAssemblyTypeName: CelularAutomat3D, Assembly-CSharp
         m_MethodName: DeselectWait
         m_Mode: 1
         m_Arguments:
@@ -2705,7 +2705,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1689456281}
-        m_TargetAssemblyTypeName: CelularAutomat2D, Assembly-CSharp
+        m_TargetAssemblyTypeName: CelularAutomat3D, Assembly-CSharp
         m_MethodName: SwitchRun
         m_Mode: 1
         m_Arguments:
@@ -2795,25 +2795,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1689456279}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e9ee5f18ae363145a4a9c19b109b333, type: 3}
+  m_Script: {fileID: 11500000, guid: db1bf31e9004d2c4aa25e8b0c3ebe30d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _preCell: {fileID: 1048156932821191013, guid: 84136c56954f4a947bbeef7672df26f4, type: 3}
-  _matixSize: 30
+  _matixSize: 5
   _size: 0
   _spacing: 0.05
+  _corners: 0
+  _wrap: 0
   _startStop: {fileID: 1573517730}
   _running: 0
   _inputWait: {fileID: 969456062}
   _wait: 0.1
   _inputState: {fileID: 325039322}
-  _state: 3
+  _state: 4
   _inputLive: {fileID: 1413744482}
-  _liveVals: 03000000040000000700000008000000
+  _liveVals: 0300000004000000050000000800000009000000
   _inputDead: {fileID: 260605464}
-  _deadVals: 000000000100000002000000050000000600000009000000
+  _deadVals: 0000000001000000020000000600000007000000
   _inputBirth: {fileID: 680161208}
-  _birthVals: 0300000004000000
+  _birthVals: 0400000006000000
   _genTMP: {fileID: 1822471405}
   _generationN: 0
   _SFX: []

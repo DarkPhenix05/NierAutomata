@@ -23,8 +23,8 @@ public class CelularAutomat2D : MonoBehaviour
     private List<List<int>> _parentMatrix = new List<List<int>>();
     private List<List<int>> _childMatrix = new List<List<int>>();
 
-    private bool _corners;
-    private bool _wrap;
+    public bool _corners;
+    public bool _wrap;
 
     [Header("BUTTONS")]
 
@@ -129,6 +129,17 @@ public class CelularAutomat2D : MonoBehaviour
                 if (dtX == 0 && dtY == 0)
                 {
                     continue; // Skip self
+                }
+
+                if (!_corners)
+                {
+                    if (dtX == -1 && dtY == -1||
+                        dtX == 1 && dtY == 1||
+                        dtX == -1 && dtY == 1||
+                        dtX == 1 && dtY == -1)
+                    {
+                        continue; // Skip self
+                    }
                 }
 
                 //SET X

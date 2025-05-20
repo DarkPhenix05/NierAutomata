@@ -7,14 +7,14 @@ public class Cell : MonoBehaviour
     public int _curState = 0;
     public int _maxState = 0;
     
-    private SpriteRenderer _SRenderer;
+    private Renderer _renderer;
     private Camera _cam;
 
     public int CellAutomatCounter = 0;
 
     void Start()
     {
-        _SRenderer = GetComponent<SpriteRenderer>();
+        _renderer = GetComponent<Renderer>();
         _cam = Camera.main;
     }
 
@@ -22,36 +22,36 @@ public class Cell : MonoBehaviour
     {
         _life = state;
 
-        if (!_SRenderer)
+        if (!_renderer)
         {
-            _SRenderer = GetComponent<SpriteRenderer>();
+            _renderer = GetComponent<Renderer>();
         }
-        _SRenderer.color = _life ? Color.white : Color.black;
+        _renderer.material.color = _life ? Color.white : Color.black;
     }
     
     public void SetState(int state)
     {
         _curState = state;
         
-        if(!_SRenderer)
+        if(!_renderer)
         {
-            _SRenderer = GetComponent<SpriteRenderer>();
+            _renderer = GetComponent<Renderer>();
         }
 
         float lerp = _maxState > 0 ? (float) _curState / _maxState : 0;
-        _SRenderer.color = Color.Lerp(Color.white, Color.black, lerp);
+        _renderer.material.color = Color.Lerp(Color.white, Color.black, lerp);
     }
 
     private void Flip()
     {
         _life = !_life;
 
-        if (!_SRenderer)
+        if (!_renderer)
         {
-            _SRenderer = GetComponent<SpriteRenderer>();
+            _renderer = GetComponent<Renderer>();
         }
 
-        _SRenderer.color = _life ? Color.white : Color.black;
+        _renderer.material.color = _life ? Color.white : Color.black;
     }
 
     public bool GetState()
@@ -71,6 +71,10 @@ public class Cell : MonoBehaviour
         }
         
         else if(CelularAutomat2D.Instance != null)
+        {
+            
+        }
+        else if (CelularAutomat3D.Instance != null)
         {
             
         }

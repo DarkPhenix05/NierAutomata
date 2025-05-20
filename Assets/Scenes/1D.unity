@@ -1320,7 +1320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0732bccd6f6cbf4b8d304aa1b9b5420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _preCell: {fileID: 385900539883042486, guid: 2c2ed776ca9f07348babd28ff79a7abc, type: 3}
+  _preCell: {fileID: 1048156932821191013, guid: 84136c56954f4a947bbeef7672df26f4, type: 3}
   _numberOfCells: 25
   _spacing: 0.1
   _B000: {fileID: 130776569}
@@ -6103,6 +6103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 655cff5ebcff77a43805adf3091e0dca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _camSpeed: 0
+  _startTrans: {x: 0, y: 0, z: 0}
 --- !u!1 &1884470073
 GameObject:
   m_ObjectHideFlags: 0
