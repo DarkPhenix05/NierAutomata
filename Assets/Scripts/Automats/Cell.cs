@@ -3,7 +3,10 @@ using UnityEngine;
 public class Cell : MonoBehaviour
 {
     public bool _life = false;
-    public int _lifeTime = 0; //Add Logic For Number of Lines
+    
+    public int _curState = 0;
+    public int _maxState = 0;
+    
     private SpriteRenderer _SRenderer;
     private Camera _cam;
 
@@ -25,6 +28,19 @@ public class Cell : MonoBehaviour
         }
         _SRenderer.color = _life ? Color.white : Color.black;
     }
+    
+    public void SetState(int state)
+    {
+        _curState = state;
+        
+        if(!_SRenderer)
+        {
+            _SRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        float lerp = _maxState > 0 ? (float) _curState / _maxState : 0;
+        _SRenderer.color = Color.Lerp(Color.white, Color.black, lerp);
+    }
 
     private void Flip()
     {
@@ -45,24 +61,24 @@ public class Cell : MonoBehaviour
 
     private void OnMouseOver()
     {
-        //Debug.Log("Over: " + this.gameObject.ToString());
         if (CelularAutomat1D.Instance != null)
         {
-            //Debug.Log("D1");
             if (!CelularAutomat1D.Instance.GetRunning() && Input.GetMouseButtonDown(0))
             {
-                //Debug.Log("Click D1");
                 Flip();
                 CelularAutomat1D.Instance.SetGenerationText();
             }
         }
+        
+        else if(CelularAutomat2D.Instance != null)
+        {
+            
+        }
 
         else if (GameOfLife.Instance != null)
         {
-            //Debug.Log("D1");
             if (!GameOfLife.Instance.GetRunning() && Input.GetMouseButtonDown(0))
             {
-                //Debug.Log("Click D2");
                 Flip();
                 GameOfLife.Instance.SetGenerationText();
             }
@@ -81,10 +97,5 @@ public class Cell : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
-    }
-
-    public void SelfDestruct()
-    {
-        Destroy(this.gameObject);
     }
 }

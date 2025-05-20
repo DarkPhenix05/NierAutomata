@@ -14,11 +14,11 @@ public class GameOfLife : MonoBehaviour
     private float _size;
     public float _spacing;
 
-    public List<List<Cell>> _cells = new List<List<Cell>>();
-    public List<GameObject> _availableCells = new List<GameObject>();
+    private List<List<Cell>> _cells = new List<List<Cell>>();
+    private List<GameObject> _availableCells = new List<GameObject>();
 
-    public List<List<bool>> _parentMatrix = new List<List<bool>>();
-    public List<List<bool>> _childMatrix = new List<List<bool>>();
+    private List<List<bool>> _parentMatrix = new List<List<bool>>();
+    private List<List<bool>> _childMatrix = new List<List<bool>>();
 
     [Header("INPUT-FIELDS")]
     public TMP_InputField _inputWait;
@@ -215,7 +215,7 @@ public class GameOfLife : MonoBehaviour
         return newCell;
     }
 
-    public int GetInactive()
+    private int GetInactive()
     {
         for (int i = 0; i < _availableCells.Count; i++)
         {
@@ -230,11 +230,10 @@ public class GameOfLife : MonoBehaviour
         return GetInactive();
     }
 
-    public void SpawnNewCell()
+    private void SpawnNewCell()
     {
-        GameObject curCell = Instantiate(_cellPre);
+        GameObject curCell = Instantiate(_cellPre, this.gameObject.transform, true);
         curCell.SetActive(false);
-        curCell.transform.SetParent(this.gameObject.transform);
 
         _availableCells.Add(curCell);
     }
@@ -259,6 +258,11 @@ public class GameOfLife : MonoBehaviour
         if (!_inputWait) return;
 
         _inputWait.text = "Wait: " + _wait.ToString("F1");
+    }
+    
+    private void SetWaitText()
+    {
+        _inputWait.text = "Wait: " + _wait.ToString("F2");
     }
 
     public void SetX()
@@ -324,12 +328,7 @@ public class GameOfLife : MonoBehaviour
         _startStop.GetComponentInChildren<TextMeshProUGUI>().text = "Running: " + _running.ToString();
     }
 
-    public void SetWaitText()
-    {
-        _inputWait.text = "Wait: " + _wait.ToString("F2");
-    }
-
-    public void SetSiceText()
+    private void SetSiceText()
     {
         if (!_inputSizeX || !_inputSizeY) return;
         
@@ -337,7 +336,7 @@ public class GameOfLife : MonoBehaviour
         _inputSizeY.text = "Y: " + _tempSize.y.ToString("n0");
     }
 
-    public void AddGeneration()
+    private void AddGeneration()
     {
         if (!_genTMP) return;
 
