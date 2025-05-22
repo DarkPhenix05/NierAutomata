@@ -2802,8 +2802,8 @@ MonoBehaviour:
   _matixSize: 30
   _size: 0
   _spacing: 0.05
-  _corners: 0
-  _wrap: 0
+  _corners: 1
+  _wrap: 1
   _startStop: {fileID: 1573517730}
   _running: 0
   _inputWait: {fileID: 969456062}
@@ -2815,7 +2815,7 @@ MonoBehaviour:
   _inputDead: {fileID: 260605464}
   _deadVals: 000000000100000002000000050000000600000009000000
   _inputBirth: {fileID: 680161208}
-  _birthVals: 0300000004000000
+  _birthVals: 030000000400000009000000
   _genTMP: {fileID: 1822471405}
   _generationN: 0
   _SFX: []
